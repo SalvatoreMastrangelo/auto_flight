@@ -81,12 +81,12 @@ async def land(drone):
     await drone.offboard.stop()
     await drone.action.land()
 
-async def move_to(drone, north, east, down, yaw):
-    await drone.offboard.set_position_ned(PositionNedYaw(north, east, down, yaw))
+async def move_to(drone, north, east, altitude, yaw):
+    await drone.offboard.set_position_ned(PositionNedYaw(north, east, -altitude, yaw))
     await asyncio.sleep(3)
 
 async def main():
-    zed, runtime = await init_camera()
+    # zed, runtime = await init_camera()
     drone = await connect_drone()
 
     # Start listening to position and attitude
@@ -98,21 +98,24 @@ async def main():
 
     asyncio.create_task(print_position(drone))
 
-
     print("Takeoff to 5 m")
     await takeoff(drone, 5)
 
     print("Move forward 2 m")
-    await move_to(drone, 2, 0, -5, 0)
+    await move_to(drone, 0, 0, 5, 90)
+    await move_to(drone, 2, 0, 5, 90)
 
     print("Move right 2 m")
-    await move_to(drone, 2, 2, -5, 0)
+    await move_to(drone, 2, 0, 5, 180)
+    await move_to(drone, 2, 2, 5, 180)
 
     print("Move backward 2 m")
-    await move_to(drone, 0, 2, -5, 0)
+    await move_to(drone, 2, 2, 5, 270)
+    await move_to(drone, 0, 2, 5, 270)
 
     print("Move left 2 m")
-    await move_to(drone, 0, 0, -5, 0)
+    await move_to(drone, 0, 2, 5, 0)
+    await move_to(drone, 0, 0, 5, 0)
 
     print("Stop offboard and land")
     # Cancel all running tasks
