@@ -1,0 +1,57 @@
+docker run -ti [image] [comando]
+	avvia l'immagine
+	-ti = tastiera + interattivo
+	--rm uccide lo zombie alla fine
+	-v[source]:[destination] mappo directory fuori container dentro il contaiener
+		EX: /dev per leggere le periferche come telecamera
+	
+docker ps
+	container attivi
+	-a mostra anche gli zombie
+	
+docker run [container zombie]
+	risveglia zombie
+	
+docker attach [container]
+	rientra nel container
+	
+docker stop [container]
+	fa diventare container zombie e sospende processi
+	
+docker rm [container]
+	
+docker rmi [image]
+
+docker commit [container]
+	trasforma container in immagine
+	
+	
+orin zed image:
+dockerhub stereolabs/zed image l4t
+
+quando si runna bisogna fare 
+	docker run --gpus all -it --privileged stereolabs/zed:[versione]
+
+udev versione linux del plug and play
+
+-test docker container:
+	docker run -it --gpus all --privileged -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v/dev:/dev stereolabs/zed:[version]
+
+-va installato opencv (qengineering sito)
+
+potrebbe essere necessario autoriazzare le connessioni a X11
+	xhost +local:
+	-v $HOME/.Xauthority:/root/.Xauthority \
+	
+ricorda di usare una USB 3.0
+
+andrebbe checkato che opengl stia funzionando con nvidia
+	glxinfo | grep -E "OpenGL vendor|OpenGL renderer"
+	
+dai un'occhiata a questo per ros2 e zed2i:
+	https://www.stereolabs.com/docs/ros2	
+	
+px4 sitl + qgroundcontrol per simulare drone 
+
++ opencv orin va cambiato dockerfile
+

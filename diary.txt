@@ -1,0 +1,98 @@
+installed docker image
+	docker pull docker.io/stereolabs/zed:[versione]
+(for my laptop: 5.0-gl-devel-cuda12.8-ubuntu22.04)
+(l4t version for orin pixhawk)
+
+installed nvidia container toolkit
+	sudo apt-get install -y nvidia-container-toolkit
+
+DO NOT USE --runtime nvidia (DEPRECATED)
+
+it might ber necessary to authorize connections to X11 with 
+	xhost +local:
+	xhost +si:localuser:root
+on bash and
+	-v $HOME/.Xauthority:/root/.Xauthority
+added to docker run parameters
+
+installed nvidia-container-toolkit:
+	https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+
+to enable opengl with nvidia on hybrid laptops NVIDIA only mode should be selected:
+	sudo nvidia-ctk runtime configure --runtime=docker
+	sudo systemctl daemon-reload
+	sudo systemctl restart docker
+	
+found out that the nvidia-container-toolkit version was too old (1.12, now 1.18)
+
+installing ros2 humble hawksbill on the stereolabs container following exactly the commands on the installation guide
+	https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
+up to "desktop install" included.
+
+testing the docker installation with turtlesim
+if not already present in ros2 installation:
+	sudo apt install ros-humble-turtlesim 
+	
+-------------------------- commit autoflight:stereolabs_zed_ros2 -----------------------------
+
+created a new user (flight) to run QGroundCOntrol (pwd: 123)
+	sudo adduser flight 
+	
+installed nano
+	sudo apt install nano
+	
+added user flight to sudoers editing /etc/sudoers
+	nano /etc/sudoers
+	flight  ALL=(ALL:ALL) ALL
+	
+moving to /usr/local
+	cd /usr/local
+
+Followed installation of px4 sitl w gazebo (
+	https://docs.px4.io/main/en/dev_setup/dev_env_linux_ubuntu
+	
+installed QGroundControl daily build
+	https://docs.qgroundcontrol.com/master/en/qgc-user-guide/releases/daily_builds.html
+	
+granted permission to access /usr to all
+	sudo chmod 777 /usr
+	
+-------------------------- commit autoflight:px4sitl_qgc -----------------------------
+
+installing MAVSDK API
+	pip install mavsdk
+	
+beware to do as flight user
+	sudo usermod -aG dialout "$(id -un)"
+before running QGroundControl
+
+add permissions to QGroundControl
+	sudo chmod +x QGroundControl-x86_64.AppImage
+	
+"""""""""""""""""""""""""""
+	
+fixing error 
+		Error: No suitable fusermount binary found on the $PATH
+		Error: $FUSERMOUNT_PROG not set
+		Cannot mount AppImage, please check your FUSE setup.
+by running qgroundcontrol with parameter
+	./QGroundControl-x86_64.AppImage --appimage-extract-and-run
+	
+"""""""""""""""""""""""""""
+
+bulding px4
+	https://docs.px4.io/main/en/dev_setup/building_px4
+	
+installing the zed wrapper for ros
+	https://www.stereolabs.com/docs/ros2
+	
+installed zed-ros2-examples (only to visualize and confirm camera is working, not necessary)
+	https://github.com/stereolabs/zed-ros2-examples
+	
+for some reason the min_depth in zed2i yaml is too small, changing it to 0.2 worked, file to modify:
+w	~/ros2_ws/src/zed-ros2-wrapper/zed_wrapper/config/zed2i.yaml
+
+
+NOT DONE YET (already present on my laptop, necessary on orin)
+		installed opencv using tutorial on qengineering:
+		https://qengineering.eu/install-opencv-on-orin-nano.html
